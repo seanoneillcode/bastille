@@ -15,15 +15,16 @@ import static org.lovely.games.LoadingManager.*;
 public class LevelManager {
 
     public static final int NUM_CLOUDS = 64;
-    private static final int NUM_POINTS = 8;
+    private static final int NUM_POINTS = 3;
     List<Tile> tiles = new ArrayList<>();
     private float animationDelta = 0f;
     public static float TILE_SIZE = 16;
-    private int MAP_SIZE = 64;
+    private int MAP_SIZE = 32;
     List<Cloud> clouds = new ArrayList<>();
     List<String> cloundImages = Arrays.asList(CLOUD_0, CLOUD_1, CLOUD_2, CLOUD_3);
     public Tile goalTile;
     LevelGenerator levelGenerator;
+    int totalNumTiles;
 
     LevelManager() {
         levelGenerator = new LevelGenerator();
@@ -42,7 +43,8 @@ public class LevelManager {
         int goalTileIndex = MathUtils.random(0, tiles.size() - 1);
         goalTile = tiles.get(goalTileIndex);
         Vector2 lPos = tiles.get(MathUtils.random(0, tiles.size() - 1)).pos;
-        tiles.add(new Tile(lPos.cpy(), new Vector2(128, 128), LIGHTHOUSE, false, Color.WHITE));
+        tiles.add(new Tile(lPos.cpy(), new Vector2(128, 128), LIGHTHOUSE, true, Color.WHITE));
+        totalNumTiles = tiles.size();
     }
 
     private void addCloud(Vector2 pos, String image, Vector2 mov, float scale) {
@@ -63,5 +65,9 @@ public class LevelManager {
 
     public Vector2 getStartPos() {
         return tiles.get(tiles.size() - 1).pos.cpy();
+    }
+
+    public int getGroundLeft() {
+        return (int) (((float)tiles.size()) / ((float)totalNumTiles) * 100);
     }
 }

@@ -33,6 +33,7 @@ public class BastilleMain extends ApplicationAdapter {
     private EffectManager effectManager;
     private PlayerManager playerManager;
     private EntityManager entityManager;
+    private TextManager textManager;
     private float animationDelta = 0f;
     Color background = new Color(0 / 256f, 149 / 256f, 233 / 256f, 1);
     Player player;
@@ -52,6 +53,7 @@ public class BastilleMain extends ApplicationAdapter {
 		inputManager = new InputManager();
 		entityManager = new EntityManager();
 		playerManager = new PlayerManager();
+		textManager = new TextManager();
         startLevel();
 	}
 
@@ -74,6 +76,11 @@ public class BastilleMain extends ApplicationAdapter {
         drawEntity(entityManager);
         drawPlayer(playerManager);
         drawCloudShadows();
+        if (levelManager.getGroundLeft() < 30) {
+            textManager.drawYouWin(batch, new Vector2(cameraManager.camera.position.x - 100, cameraManager.camera.position.y + 10));
+        } else {
+            textManager.drawText(batch, "GROUND LEFT " + levelManager.getGroundLeft() + "%", new Vector2(cameraManager.camera.position.x - 150, cameraManager.camera.position.y + 100));
+        }
 		batch.end();
 	}
 
