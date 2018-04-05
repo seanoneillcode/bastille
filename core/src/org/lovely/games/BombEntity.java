@@ -1,0 +1,36 @@
+package org.lovely.games;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+
+public class BombEntity extends Entity {
+
+    private static final float BOMB_TIMER = 0.6f;
+    private static final float DYING_TIMER = 0.8f;
+    float timer = 0;
+
+    public BombEntity(Vector2 pos, Vector2 size, String image, String dyingImage) {
+        super(pos, size, image, dyingImage);
+        this.timer = BOMB_TIMER;
+    }
+
+    public void update(BastilleMain bastilleMain) {
+        timer -= Gdx.graphics.getDeltaTime();
+        if (state == EntityState.ALIVE) {
+            if (timer < 0) {
+                this.state = EntityState.DYING;
+                this.anim = 0;
+                timer = DYING_TIMER;
+
+            }
+        }
+        if (state == EntityState.DYING) {
+            if (timer < 0) {
+                this.state = EntityState.DEAD;
+            }
+            if (timer < 0.6f) {
+                bastilleMain.destroyTile(pos.cpy().sub(24,24), new Vector2(48, 48));
+            }
+        }
+    }
+}

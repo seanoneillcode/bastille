@@ -31,10 +31,11 @@ public class BastilleMain extends ApplicationAdapter {
     private LoadingManager loadingManager;
     private LevelManager levelManager;
     private EffectManager effectManager;
-    private EntManager entManager;
+    private PlayerManager playerManager;
+    private EntityManager entityManager;
     private float animationDelta = 0f;
     Color background = new Color(0 / 256f, 149 / 256f, 233 / 256f, 1);
-    Ent player;
+    Player player;
     private List<Cloud> cloudShadows;
 
     @Override
@@ -49,7 +50,8 @@ public class BastilleMain extends ApplicationAdapter {
 		cameraManager = new CameraManager();
 		effectManager = new EffectManager();
 		inputManager = new InputManager();
-		entManager = new EntManager();
+		entityManager = new EntityManager();
+		playerManager = new PlayerManager();
         startLevel();
 	}
 
@@ -58,8 +60,9 @@ public class BastilleMain extends ApplicationAdapter {
         inputManager.update(this);
         cameraManager.update(player.pos, inputManager);
         levelManager.update();
-        entManager.update(levelManager, this, effectManager);
+        playerManager.update(levelManager, this, effectManager);
         effectManager.update();
+        entityManager.update(this);
         updatePlayer();
 		Gdx.gl.glClearColor(background.r, background.g, background.b, background.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -68,89 +71,110 @@ public class BastilleMain extends ApplicationAdapter {
 		batch.begin();
         drawLevel(levelManager);
         drawEffects(effectManager);
-        drawEnts(entManager);
+        drawEntity(entityManager);
+        drawPlayer(playerManager);
         drawCloudShadows();
 		batch.end();
 	}
 
     private void drawEffects(EffectManager effectManager) {
-        Sprite effectSprite = new Sprite();
+        Sprite sprite = new Sprite();
         for (Effect effect : effectManager.effects) {
             TextureRegion frame = loadingManager.getAnim(effect.image).getKeyFrame(effect.anim, true);
-            effectSprite.setRegion(frame);
-            effectSprite.setSize(frame.getRegionWidth(), frame.getRegionHeight());
-            effectSprite.setPosition(effect.pos.x, effect.pos.y);
-            effectSprite.draw(batch);
+            sprite.setRegion(frame);
+            float width = frame.getRegionWidth();
+            float height = frame.getRegionHeight();
+            sprite.setSize(width, height);
+            sprite.setPosition(effect.pos.x - (width / 2.0f), effect.pos.y - (height / 2.0f));
+            sprite.draw(batch);
         }
     }
 
-    private void drawEnts(EntManager entManager) {
-        Sprite entSprite = new Sprite();
-        entSprite.setScale(2);
-        for (Ent ent : entManager.ents) {
-            entSprite.setSize(ent.size.x, ent.size.y);
-            float actualy = ent.pos.y + ent.z;
-            entSprite.setPosition(ent.pos.x, actualy);
+    private void drawEntity(EntityManager entityManager) {
+        Sprite sprite = new Sprite();
+        for (Entity entity : entityManager.entities) {
+            TextureRegion frame = loadingManager.getAnim(entity.getImage()).getKeyFrame(entity.anim, entity.shouldLoop());
+            sprite.setRegion(frame);
+            float width = frame.getRegionWidth();
+            float height = frame.getRegionHeight();
+            sprite.setSize(width, height);
+            sprite.setPosition(entity.pos.x - (width / 2.0f), entity.pos.y - (height / 2.0f));
+            sprite.draw(batch);
+        }
+    }
 
-            if (ent.state != Ent.EntState.DEAD) {
+    private void drawPlayer(PlayerManager playerManager) {
+        Sprite sprite = new Sprite();
+        sprite.setScale(2);
+        for (Player player : playerManager.players) {
+            sprite.setSize(player.size.x, player.size.y);
+            float actualy = player.pos.y + player.z;
+
+
+            if (player.state != Player.PlayerState.DEAD) {
                 TextureRegion frame = null;
-                if (ent.state == Ent.EntState.FALLING) {
-                    frame = loadingManager.getAnim(PLAYER_FALL).getKeyFrame(ent.delta, false);
+                if (player.state == Player.PlayerState.FALLING) {
+                    frame = loadingManager.getAnim(PLAYER_FALL).getKeyFrame(player.delta, false);
                 }
-                if (ent.state == Ent.EntState.JUMPING) {
-                    frame = loadingManager.getAnim(PLAYER_JUMP).getKeyFrame(ent.delta, true);
+                if (player.state == Player.PlayerState.JUMPING) {
+                    frame = loadingManager.getAnim(PLAYER_JUMP).getKeyFrame(player.delta, true);
                 }
-                if (ent.state == Ent.EntState.ALIVE) {
+                if (player.state == Player.PlayerState.ALIVE) {
                     if (inputManager.isMoving()) {
-                        frame = loadingManager.getAnim(PLAYER_RUN).getKeyFrame(ent.delta, true);
+                        frame = loadingManager.getAnim(PLAYER_RUN).getKeyFrame(player.delta, true);
                     } else {
-                        frame = loadingManager.getAnim(PLAYER_IDLE).getKeyFrame(ent.delta, true);
+                        frame = loadingManager.getAnim(PLAYER_IDLE).getKeyFrame(player.delta, true);
                     }
                 }
-                entSprite.setRegion(frame);
+                sprite.setRegion(frame);
+                float width = frame.getRegionWidth();
+                float height = frame.getRegionHeight();
+                sprite.setPosition(player.pos.x - (width / 2.0f), actualy - (height / 2.0f));
                 if (!inputManager.isRight) {
-                    entSprite.flip(true, false);
+                    sprite.flip(true, false);
                 }
-                if (ent.state != Ent.EntState.DEAD && ent.state != Ent.EntState.FALLING) {
-                    batch.draw(loadingManager.getAnim(PLAYER_SHADOW).getKeyFrame(ent.delta, false), ent.pos.x, ent.pos.y - 4);
+                if (player.state != Player.PlayerState.DEAD && player.state != Player.PlayerState.FALLING) {
+                    batch.draw(loadingManager.getAnim(PLAYER_SHADOW).getKeyFrame(player.delta, false), player.pos.x - (width / 2.0f), player.pos.y - 4 - (height / 2.0f));
                 }
-                entSprite.draw(batch);
+                sprite.draw(batch);
             }
         }
     }
 
     private void drawCloudShadows() {
-        Sprite cloudSprite = new Sprite();
-        cloudSprite.setSize(128, 128);
+        Sprite sprite = new Sprite();
+        sprite.setSize(128, 128);
         for (Cloud cloud : cloudShadows) {
-            cloudSprite.setPosition(cloud.pos.x, cloud.pos.y);
+            sprite.setPosition(cloud.pos.x, cloud.pos.y);
             TextureRegion frame = loadingManager.getAnim(cloud.img).getKeyFrame(animationDelta, true);
-            cloudSprite.setRegion(frame);
-            cloudSprite.draw(batch);
+            sprite.setRegion(frame);
+            sprite.draw(batch);
         }
     }
 
     private void drawLevel(LevelManager levelManager) {
         cloudShadows = new ArrayList<>();
-        Sprite cloudSprite = new Sprite();
-        cloudSprite.setSize(128, 128);
+        Sprite sprite = new Sprite();
+        sprite.setSize(128, 128);
         for (Cloud cloud : levelManager.clouds) {
             if (cloud.img == CLOUD_3) {
                 cloudShadows.add(cloud);
                 continue;
             }
-            cloudSprite.setPosition(cloud.pos.x, cloud.pos.y);
+            sprite.setPosition(cloud.pos.x, cloud.pos.y);
             TextureRegion frame = loadingManager.getAnim(cloud.img).getKeyFrame(animationDelta, true);
-            cloudSprite.setRegion(frame);
-            cloudSprite.setScale(cloud.scale);
-            cloudSprite.draw(batch);
+            sprite.setRegion(frame);
+            sprite.setScale(cloud.scale);
+            sprite.draw(batch);
         }
 
         Sprite tileSprite = new Sprite();
 
         for (Tile tile : levelManager.tiles) {
             TextureRegion frame = loadingManager.getAnim(tile.image).getKeyFrame(animationDelta + tile.animationOffset, true);
-            tileSprite.setPosition(tile.pos.x, tile.pos.y);
+            float width = frame.getRegionWidth();
+            float height = frame.getRegionHeight();
+            tileSprite.setPosition(tile.pos.x - (width / 2.0f), tile.pos.y - (height / 2.0f));
             tileSprite.setSize(tile.size.x, tile.size.y);
             tileSprite.setRegion(frame);
             tileSprite.setColor(tile.color);
@@ -172,31 +196,47 @@ public class BastilleMain extends ApplicationAdapter {
 	}
 
     public void movePlayer(Vector2 inputVector) {
-        if (player.state == Ent.EntState.ALIVE) {
+        if (player.state == Player.PlayerState.ALIVE) {
             Vector2 change = inputVector.cpy().scl(PLAYER_SPEED);
             player.pos.add(change);
         }
-        if (player.state == Ent.EntState.JUMPING) {
+        if (player.state == Player.PlayerState.JUMPING) {
             Vector2 change = inputVector.cpy().scl(PLAYER_SPEED).scl(0.8f);
             player.pos.add(change);
         }
     }
 
     private void startLevel() {
-        entManager.start();
+        playerManager.start();
         levelManager.start();
         effectManager.start();
         Vector2 startPos = levelManager.getStartPos();
-        player = entManager.addEnt(startPos, new Vector2(8, 8), new Vector2(0, 0), true);
+        player = playerManager.addPlayer(startPos, new Vector2(8, 8), new Vector2(0, 0), true);
     }
 
     public void jumpPlayer() {
         player.jump();
+//        inputManager.throwBomb(this);
     }
 
     private void updatePlayer() {
-        if (EntManager.isOverlap(player.pos, player.size, levelManager.goalTile.pos, levelManager.goalTile.size)) {
+        if (PlayerManager.isOverlap(player.pos, player.size, levelManager.goalTile.pos, levelManager.goalTile.size)) {
             startLevel();
+        }
+    }
+
+    public void throwBomb() {
+        Vector2 pos = player.pos.cpy();
+        Entity bomb = new BombEntity(pos, new Vector2(96, 96), BOMB, EXPLODE);
+        entityManager.entities.add(bomb);
+    }
+
+    public void destroyTile(Vector2 pos, Vector2 size) {
+        for (Tile tile : levelManager.tiles) {
+            if (PlayerManager.isOverlap(tile.pos, tile.size, pos, size)) {
+                tile.isDead = true;
+                effectManager.addEffect(tile.pos, GRASS_TILE_BREAK, 0.8f, new Vector2(0.1f, -0.05f));
+            }
         }
     }
 }

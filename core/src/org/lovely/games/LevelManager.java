@@ -7,13 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.lovely.games.LoadingManager.*;
 
 public class LevelManager {
 
-    public static final int NUM_CLOUDS = 16;
+    public static final int NUM_CLOUDS = 64;
     private static final int NUM_POINTS = 8;
     List<Tile> tiles = new ArrayList<>();
     private float animationDelta = 0f;
@@ -41,7 +42,7 @@ public class LevelManager {
         int goalTileIndex = MathUtils.random(0, tiles.size() - 1);
         goalTile = tiles.get(goalTileIndex);
         Vector2 lPos = tiles.get(MathUtils.random(0, tiles.size() - 1)).pos;
-        tiles.add(new Tile(lPos.cpy(), new Vector2(64, 128), LIGHTHOUSE, false, Color.WHITE));
+        tiles.add(new Tile(lPos.cpy(), new Vector2(128, 128), LIGHTHOUSE, false, Color.WHITE));
     }
 
     private void addCloud(Vector2 pos, String image, Vector2 mov, float scale) {
@@ -57,6 +58,7 @@ public class LevelManager {
                 cloud.pos.y = MathUtils.random(0, MAP_SIZE * TILE_SIZE);
             }
         }
+        tiles.removeIf(tile -> tile.isDead);
     }
 
     public Vector2 getStartPos() {

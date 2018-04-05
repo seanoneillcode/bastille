@@ -25,6 +25,7 @@ public class LoadingManager {
     public static final String GRASS_TILE_7 = "grass-tile-7.png";
     public static final String GRASS_TILE_8 = "grass-tile-8.png";
     public static final String GRASS_TILE_9 = "grass-tile-9.png";
+    public static final String GRASS_TILE_BREAK = "grass-tile-break.png";
     public static final String LIGHTHOUSE = "lighthouse.png";
     public static final String BOTTOM_TILE = "bottom-tile.png";
     public static final String CLOUD_0 = "cloud-0.png";
@@ -32,6 +33,8 @@ public class LoadingManager {
     public static final String CLOUD_2 = "cloud-2.png";
     public static final String CLOUD_3 = "cloud-3.png";
     public static final String GOAL = "goal.png";
+    public static final String BOMB = "bomb.png";
+    public static final String EXPLODE = "explode.png";
     public static final String LAND_EFFECT = "land-effect.png";
     private Map<String, Animation<TextureRegion>> anims;
     AssetManager assetManager;
@@ -55,6 +58,7 @@ public class LoadingManager {
         assetManager.load(GRASS_TILE_7, Texture.class);
         assetManager.load(GRASS_TILE_8, Texture.class);
         assetManager.load(GRASS_TILE_9, Texture.class);
+        assetManager.load(GRASS_TILE_BREAK, Texture.class);
         assetManager.load(LIGHTHOUSE, Texture.class);
         assetManager.load(BOTTOM_TILE, Texture.class);
         assetManager.load(PLAYER_SHADOW, Texture.class);
@@ -64,6 +68,8 @@ public class LoadingManager {
         assetManager.load(CLOUD_2, Texture.class);
         assetManager.load(CLOUD_3, Texture.class);
         assetManager.load(GOAL, Texture.class);
+        assetManager.load(BOMB, Texture.class);
+        assetManager.load(EXPLODE, Texture.class);
 
         assetManager.finishLoading();
 
@@ -72,6 +78,8 @@ public class LoadingManager {
         anims.put(PLAYER_RUN, loadAnimation(PLAYER_RUN, 4, 0.15f));
         anims.put(PLAYER_JUMP, loadAnimation(PLAYER_JUMP, 2, 0.25f));
         anims.put(GOAL, loadAnimation(GOAL, 2, 0.25f));
+        anims.put(BOMB, loadAnimation(BOMB, 4, 0.15f));
+        anims.put(EXPLODE, loadAnimation(EXPLODE, 8, 0.1f));
         anims.put(GRASS_TILE, loadAnimation(GRASS_TILE, 4, 0.5f));
         anims.put(GRASS_TILE_2, loadAnimation(GRASS_TILE_2, 4, 0.5f));
         anims.put(GRASS_TILE_3, loadAnimation(GRASS_TILE_3, 4, 0.5f));
@@ -81,7 +89,8 @@ public class LoadingManager {
         anims.put(GRASS_TILE_7, loadAnimation(GRASS_TILE_7, 4, 0.5f));
         anims.put(GRASS_TILE_8, loadAnimation(GRASS_TILE_8, 4, 0.5f));
         anims.put(GRASS_TILE_9, loadAnimation(GRASS_TILE_9, 4, 0.5f));
-        anims.put(LIGHTHOUSE, loadAnimation(LIGHTHOUSE, 1, 1f));
+        anims.put(GRASS_TILE_BREAK, loadAnimation(GRASS_TILE_BREAK, 4, 0.2f));
+        anims.put(LIGHTHOUSE, loadAnimation(LIGHTHOUSE, 8, 0.25f));
         anims.put(BOTTOM_TILE, loadAnimation(BOTTOM_TILE, 1, 1f));
         anims.put(PLAYER_SHADOW, loadAnimation(PLAYER_SHADOW, 1, 1f));
         anims.put(CLOUD_0, loadAnimation(CLOUD_0, 1, 1f));

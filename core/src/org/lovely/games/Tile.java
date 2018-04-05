@@ -12,6 +12,8 @@ public class Tile {
     boolean isGround;
     Color color;
     float animationOffset;
+    float fallingApart;
+    boolean isDead;
 
     public Tile(Vector2 pos, Vector2 size, String image, boolean isGround, Color color) {
         this.pos = pos;
@@ -20,5 +22,7 @@ public class Tile {
         this.size = size;
         this.color = color;
         this.animationOffset = MathUtils.random(0f, 1f);
+        this.fallingApart = 0;
+        this.isDead = false;
     }
 }
