@@ -63,11 +63,10 @@ public class BastilleMain extends ApplicationAdapter {
 	public void render () {
         inputManager.update(this);
         cameraManager.update(player.pos, inputManager, screenShaker);
-        levelManager.update();
+        levelManager.update(this);
         playerManager.update(levelManager, this, effectManager);
         effectManager.update();
         entityManager.update(this);
-        updatePlayer();
 		Gdx.gl.glClearColor(background.r, background.g, background.b, background.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(cameraManager.camera.combined);
@@ -189,13 +188,6 @@ public class BastilleMain extends ApplicationAdapter {
             tileSprite.setColor(tile.color);
             tileSprite.draw(batch);
         }
-        Sprite goalSprite = new Sprite();
-        goalSprite.setSize(TILE_SIZE * 2, TILE_SIZE * 2);
-        Tile goalTile = levelManager.goalTile;
-        TextureRegion frame = loadingManager.getAnim(GOAL).getKeyFrame(animationDelta, true);
-        goalSprite.setPosition(goalTile.pos.x, goalTile.pos.y);
-        goalSprite.setRegion(frame);
-        goalSprite.draw(batch);
     }
 
 	@Override
@@ -215,7 +207,7 @@ public class BastilleMain extends ApplicationAdapter {
         }
     }
 
-    private void startLevel() {
+    void startLevel() {
         playerManager.start();
         levelManager.start();
         effectManager.start();
@@ -226,12 +218,6 @@ public class BastilleMain extends ApplicationAdapter {
     public void jumpPlayer() {
         player.jump();
 //        inputManager.throwBomb(this);
-    }
-
-    private void updatePlayer() {
-        if (PlayerManager.isOverlap(player.pos, player.size, levelManager.goalTile.pos, levelManager.goalTile.size)) {
-            startLevel();
-        }
     }
 
     public void throwBomb() {

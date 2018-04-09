@@ -15,16 +15,16 @@ import static org.lovely.games.LoadingManager.*;
 public class LevelManager {
 
     public static final int NUM_CLOUDS = 64;
-    private static final int NUM_POINTS = 3;
+    private static final int NUM_POINTS = 6;
     List<Tile> tiles = new ArrayList<>();
     private float animationDelta = 0f;
     public static float TILE_SIZE = 16;
-    private int MAP_SIZE = 32;
+    private int MAP_SIZE = 64;
     List<Cloud> clouds = new ArrayList<>();
     List<String> cloundImages = Arrays.asList(CLOUD_0, CLOUD_1, CLOUD_2, CLOUD_3);
-    public Tile goalTile;
     LevelGenerator levelGenerator;
     int totalNumTiles;
+    private float endingTimer;
 
     LevelManager() {
         levelGenerator = new LevelGenerator();
@@ -40,8 +40,6 @@ public class LevelManager {
             addCloud(pos, img, mov, scale);
         }
         tiles.addAll(levelGenerator.generate(NUM_POINTS, MAP_SIZE));
-        int goalTileIndex = MathUtils.random(0, tiles.size() - 1);
-        goalTile = tiles.get(goalTileIndex);
         Vector2 lPos = tiles.get(MathUtils.random(0, tiles.size() - 1)).pos;
         tiles.add(new Tile(lPos.cpy(), new Vector2(128, 128), LIGHTHOUSE, true, Color.WHITE));
         totalNumTiles = tiles.size();
@@ -51,7 +49,7 @@ public class LevelManager {
         clouds.add(new Cloud(pos, image, mov, scale));
     }
 
-    public void update() {
+    public void update(BastilleMain bastilleMain) {
         animationDelta = animationDelta + Gdx.graphics.getDeltaTime();
         for (Cloud cloud : clouds) {
             cloud.pos.add(cloud.mov);
@@ -61,10 +59,23 @@ public class LevelManager {
             }
         }
         tiles.removeIf(tile -> tile.isDead);
+        if (endingTimer <= 0 && getGroundLeft() < 30) {
+            endingTimer = 2f;
+        }
+        if (endingTimer > 0) {
+            endingTimer = endingTimer - Gdx.graphics.getDeltaTime();
+            if (endingTimer < 0) {
+                bastilleMain.startLevel();
+            }
+        }
     }
 
     public Vector2 getStartPos() {
-        return tiles.get(tiles.size() - 1).pos.cpy();
+        Tile tile = tiles.get(MathUtils.random(tiles.size() - 1));
+        while (!tile.isGround) {
+            tile = tiles.get(MathUtils.random(tiles.size() - 1));
+        }
+        return tile.pos.cpy();
     }
 
     public int getGroundLeft() {

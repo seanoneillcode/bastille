@@ -15,7 +15,7 @@ public class TextManager {
     }
 
     public void drawText(SpriteBatch batch, String text, Vector2 pos) {
-        font.getData().scale(0.0f);
+        font.getData().setScale(1.0f);
         font.setColor(Color.BLACK);
         font.draw(batch, text, pos.x, pos.y - 1 );
         font.setColor(Color.WHITE);
