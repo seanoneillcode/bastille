@@ -34,6 +34,7 @@ public class BastilleMain extends ApplicationAdapter {
     private PlayerManager playerManager;
     private EntityManager entityManager;
     private TextManager textManager;
+    private ScreenShaker screenShaker;
     private float animationDelta = 0f;
     Color background = new Color(0 / 256f, 149 / 256f, 233 / 256f, 1);
     Player player;
@@ -54,13 +55,14 @@ public class BastilleMain extends ApplicationAdapter {
 		entityManager = new EntityManager();
 		playerManager = new PlayerManager();
 		textManager = new TextManager();
+		screenShaker = new ScreenShaker();
         startLevel();
 	}
 
 	@Override
 	public void render () {
         inputManager.update(this);
-        cameraManager.update(player.pos, inputManager);
+        cameraManager.update(player.pos, inputManager, screenShaker);
         levelManager.update();
         playerManager.update(levelManager, this, effectManager);
         effectManager.update();
@@ -245,5 +247,9 @@ public class BastilleMain extends ApplicationAdapter {
                 effectManager.addEffect(tile.pos, GRASS_TILE_BREAK, 0.8f, new Vector2(0.1f, -0.05f));
             }
         }
+    }
+
+    public void shakeScreen(float amount) {
+        screenShaker.shake(amount);
     }
 }

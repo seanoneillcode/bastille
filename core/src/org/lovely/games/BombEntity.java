@@ -7,7 +7,7 @@ public class BombEntity extends Entity {
 
     private static final float BOMB_TIMER = 0.6f;
     private static final float DYING_TIMER = 0.8f;
-    float timer = 0;
+    float timer;
 
     public BombEntity(Vector2 pos, Vector2 size, String image, String dyingImage) {
         super(pos, size, image, dyingImage);
@@ -21,7 +21,7 @@ public class BombEntity extends Entity {
                 this.state = EntityState.DYING;
                 this.anim = 0;
                 timer = DYING_TIMER;
-
+                bastilleMain.shakeScreen(10);
             }
         }
         if (state == EntityState.DYING) {
