@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lovely.games.LoadingManager.LAND_EFFECT;
+import static org.lovely.games.LoadingManager.SOUND_PAH;
 
 public class PlayerManager {
 
@@ -24,11 +25,11 @@ public class PlayerManager {
         return player;
     }
 
-    public void update(LevelManager levelManager, BastilleMain bastilleMain, EffectManager effectManager) {
+    public void update(LevelManager levelManager, BastilleMain bastilleMain, EffectManager effectManager, SoundManager soundManager) {
         boolean hasDeadEnts = false;
         for (Player player : players) {
             if (player.state == Player.PlayerState.ALIVE && player.needsGround && !isOnGround(levelManager, player.pos.cpy().add(player.offset), player.size)) {
-                player.fall();
+                player.fall(soundManager);
             }
             if (player.state == Player.PlayerState.FALLING) {
                 player.fallTimer = player.fallTimer - Gdx.graphics.getDeltaTime();
@@ -47,13 +48,15 @@ public class PlayerManager {
                     player.jumpTimer = 0;
                     player.z = 0;
                     if (player.needsGround && !isOnGround(levelManager, player.pos.cpy().add(player.offset), player.size)) {
-                        player.fall();
+                        player.fall(soundManager);
                     } else {
+                        soundManager.playSound(SOUND_PAH);
                         effectManager.addEffect(player.pos.cpy().add(-4, -10), LAND_EFFECT, 0.3f, new Vector2());
                     }
 
                 }
             }
+            player.update(soundManager);
             player.jumpTimer = player.jumpTimer - Gdx.graphics.getDeltaTime();
             player.delta = player.delta + Gdx.graphics.getDeltaTime();
         }

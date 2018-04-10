@@ -3,6 +3,8 @@ package org.lovely.games;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
+import static org.lovely.games.LoadingManager.SOUND_EXPLOSION;
+
 public class BombEntity extends Entity {
 
     private static final float BOMB_TIMER = 0.6f;
@@ -14,7 +16,7 @@ public class BombEntity extends Entity {
         this.timer = BOMB_TIMER;
     }
 
-    public void update(BastilleMain bastilleMain) {
+    public void update(BastilleMain bastilleMain, SoundManager soundManager) {
         timer -= Gdx.graphics.getDeltaTime();
         if (state == EntityState.ALIVE) {
             if (timer < 0) {
@@ -22,6 +24,7 @@ public class BombEntity extends Entity {
                 this.anim = 0;
                 timer = DYING_TIMER;
                 bastilleMain.shakeScreen(10);
+                soundManager.playSound(SOUND_EXPLOSION);
             }
         }
         if (state == EntityState.DYING) {

@@ -1,6 +1,7 @@
 package org.lovely.games;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -36,6 +37,13 @@ public class LoadingManager {
     public static final String BOMB = "bomb.png";
     public static final String EXPLODE = "explode.png";
     public static final String LAND_EFFECT = "land-effect.png";
+    public static final String SOUND_HUP = "sound/hup.ogg";
+    public static final String SOUND_PAH = "sound/pah.ogg";
+    public static final String SOUND_FALL_SCREAM = "sound/fall-scream.ogg";
+    public static final String SOUND_EXPLOSION = "sound/explosion.ogg";
+    public static final String SOUND_SWISH = "sound/swish.ogg";
+    public static final String SOUND_MUSIC_CLOUDS = "sound/music-clouds.ogg";
+
     private Map<String, Animation<TextureRegion>> anims;
     AssetManager assetManager;
 
@@ -71,6 +79,13 @@ public class LoadingManager {
         assetManager.load(BOMB, Texture.class);
         assetManager.load(EXPLODE, Texture.class);
 
+        assetManager.load(SOUND_HUP, Sound.class);
+        assetManager.load(SOUND_PAH, Sound.class);
+        assetManager.load(SOUND_FALL_SCREAM, Sound.class);
+        assetManager.load(SOUND_EXPLOSION, Sound.class);
+        assetManager.load(SOUND_SWISH, Sound.class);
+        assetManager.load(SOUND_MUSIC_CLOUDS, Sound.class);
+
         assetManager.finishLoading();
 
         anims.put(PLAYER_IDLE, loadAnimation(PLAYER_IDLE, 4, 0.25f));
@@ -98,6 +113,10 @@ public class LoadingManager {
         anims.put(CLOUD_2, loadAnimation(CLOUD_2, 1, 1f));
         anims.put(CLOUD_3, loadAnimation(CLOUD_3, 1, 1f));
         anims.put(LAND_EFFECT, loadAnimation(LAND_EFFECT, 6, 0.05f));
+    }
+
+    public Sound getSound(String name) {
+        return assetManager.get(name, Sound.class);
     }
 
     public Animation<TextureRegion> getAnim(String name) {

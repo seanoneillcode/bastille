@@ -14,12 +14,12 @@ public class EntityManager {
         entities = new ArrayList<>();
     }
 
-    public void update(BastilleMain bastilleMain) {
+    public void update(BastilleMain bastilleMain, SoundManager soundManager) {
         Iterator<Entity> entityIterator = entities.iterator();
         while (entityIterator.hasNext()) {
             Entity entity = entityIterator.next();
             entity.anim += Gdx.graphics.getDeltaTime();
-            entity.update(bastilleMain);
+            entity.update(bastilleMain, soundManager);
             if (entity.state == Entity.EntityState.DEAD) {
                 entityIterator.remove();
             }

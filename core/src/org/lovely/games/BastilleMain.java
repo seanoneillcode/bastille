@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,7 +19,6 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lovely.games.LevelManager.TILE_SIZE;
 import static org.lovely.games.LoadingManager.*;
 
 public class BastilleMain extends ApplicationAdapter {
@@ -26,7 +27,6 @@ public class BastilleMain extends ApplicationAdapter {
 
     private CameraManager cameraManager;
     private InputManager inputManager;
-    private float PLAYER_SPEED = 1.8f;
     private AssetManager assetManager;
     private LoadingManager loadingManager;
     private LevelManager levelManager;
@@ -34,6 +34,7 @@ public class BastilleMain extends ApplicationAdapter {
     private PlayerManager playerManager;
     private EntityManager entityManager;
     private TextManager textManager;
+    private SoundManager soundManager;
     private ScreenShaker screenShaker;
     private float animationDelta = 0f;
     Color background = new Color(0 / 256f, 149 / 256f, 233 / 256f, 1);
@@ -46,11 +47,13 @@ public class BastilleMain extends ApplicationAdapter {
         assetManager = new AssetManager();
         FileHandleResolver fileHandleResolver = new InternalFileHandleResolver();
         assetManager.setLoader(Texture.class, new TextureLoader(fileHandleResolver));
+        assetManager.setLoader(Sound.class, new SoundLoader(fileHandleResolver));
         loadingManager = new LoadingManager(assetManager);
         loadingManager.load();
         levelManager = new LevelManager();
 		cameraManager = new CameraManager();
 		effectManager = new EffectManager();
+        soundManager = new SoundManager(loadingManager);
 		inputManager = new InputManager();
 		entityManager = new EntityManager();
 		playerManager = new PlayerManager();
@@ -64,9 +67,9 @@ public class BastilleMain extends ApplicationAdapter {
         inputManager.update(this);
         cameraManager.update(player.pos, inputManager, screenShaker);
         levelManager.update(this);
-        playerManager.update(levelManager, this, effectManager);
+        playerManager.update(levelManager, this, effectManager, soundManager);
         effectManager.update();
-        entityManager.update(this);
+        entityManager.update(this, soundManager);
 		Gdx.gl.glClearColor(background.r, background.g, background.b, background.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(cameraManager.camera.combined);
@@ -197,26 +200,20 @@ public class BastilleMain extends ApplicationAdapter {
 	}
 
     public void movePlayer(Vector2 inputVector) {
-        if (player.state == Player.PlayerState.ALIVE) {
-            Vector2 change = inputVector.cpy().scl(PLAYER_SPEED);
-            player.pos.add(change);
-        }
-        if (player.state == Player.PlayerState.JUMPING) {
-            Vector2 change = inputVector.cpy().scl(PLAYER_SPEED).scl(0.8f);
-            player.pos.add(change);
-        }
+        player.move(inputVector);
     }
 
     void startLevel() {
         playerManager.start();
         levelManager.start();
         effectManager.start();
+        soundManager.playMusic(SOUND_MUSIC_CLOUDS);
         Vector2 startPos = levelManager.getStartPos();
         player = playerManager.addPlayer(startPos, new Vector2(8, 8), new Vector2(0, 0), true);
     }
 
     public void jumpPlayer() {
-        player.jump();
+        player.jump(soundManager);
 //        inputManager.throwBomb(this);
     }
 

@@ -20,7 +20,7 @@ public class Entity {
         this.dyingImage = dyingImage;
     }
 
-    public void update(BastilleMain bastilleMain) {
+    public void update(BastilleMain bastilleMain, SoundManager soundManager) {
 
     }
 
