@@ -34,6 +34,7 @@ public class LoadingManager {
     public static final String CLOUD_2 = "cloud-2.png";
     public static final String CLOUD_3 = "cloud-3.png";
     public static final String GOAL = "goal.png";
+    public static final String SNAIL = "snail-move.png";
     public static final String BOMB = "bomb.png";
     public static final String EXPLODE = "explode.png";
     public static final String LAND_EFFECT = "land-effect.png";
@@ -77,6 +78,7 @@ public class LoadingManager {
         assetManager.load(CLOUD_3, Texture.class);
         assetManager.load(GOAL, Texture.class);
         assetManager.load(BOMB, Texture.class);
+        assetManager.load(SNAIL, Texture.class);
         assetManager.load(EXPLODE, Texture.class);
 
         assetManager.load(SOUND_HUP, Sound.class);
@@ -104,6 +106,7 @@ public class LoadingManager {
         anims.put(GRASS_TILE_7, loadAnimation(GRASS_TILE_7, 4, 0.5f));
         anims.put(GRASS_TILE_8, loadAnimation(GRASS_TILE_8, 4, 0.5f));
         anims.put(GRASS_TILE_9, loadAnimation(GRASS_TILE_9, 4, 0.5f));
+        anims.put(SNAIL, loadAnimation(SNAIL, 4, 0.2f));
         anims.put(GRASS_TILE_BREAK, loadAnimation(GRASS_TILE_BREAK, 4, 0.2f));
         anims.put(LIGHTHOUSE, loadAnimation(LIGHTHOUSE, 8, 0.25f));
         anims.put(BOTTOM_TILE, loadAnimation(BOTTOM_TILE, 1, 1f));

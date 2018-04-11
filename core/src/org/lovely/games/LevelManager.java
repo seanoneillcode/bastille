@@ -16,6 +16,8 @@ public class LevelManager {
 
     public static final int NUM_CLOUDS = 64;
     private static final int NUM_POINTS = 6;
+    private static final int NUM_OF_BOMBS = 12;
+    private static final int NUM_SNAILS = 12;
     List<Tile> tiles = new ArrayList<>();
     private float animationDelta = 0f;
     public static float TILE_SIZE = 16;
@@ -30,7 +32,7 @@ public class LevelManager {
         levelGenerator = new LevelGenerator();
     }
 
-    public void start() {
+    public void start(EntityManager entityManager) {
         tiles.clear();
         for (int i = 0; i < NUM_CLOUDS; i++) {
             Vector2 pos = new Vector2(MathUtils.random(0, MAP_SIZE * TILE_SIZE), MathUtils.random(0, MAP_SIZE * TILE_SIZE));
@@ -40,9 +42,31 @@ public class LevelManager {
             addCloud(pos, img, mov, scale);
         }
         tiles.addAll(levelGenerator.generate(NUM_POINTS, MAP_SIZE));
-        Vector2 lPos = tiles.get(MathUtils.random(0, tiles.size() - 1)).pos;
+        Vector2 lPos = getRandomTile().pos;
         tiles.add(new Tile(lPos.cpy(), new Vector2(128, 128), LIGHTHOUSE, true, Color.WHITE));
         totalNumTiles = tiles.size();
+        addSnails(entityManager);
+    }
+
+    private void addSnails(EntityManager entityManager) {
+        for (int i = 0; i < NUM_SNAILS; i++) {
+            Tile tile = getRandomTile();
+            Vector2 move = new Vector2(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
+            Entity snailEntity = new SnailEntity(tile.pos.cpy(), new Vector2(32, 32), SNAIL, EXPLODE, move);
+            entityManager.addEntity(snailEntity);
+        }
+    }
+
+    private Tile getRandomTile() {
+        return tiles.get(MathUtils.random(0, tiles.size() - 1));
+    }
+
+    private void addBombs(EntityManager entityManager) {
+        for (int i = 0; i < NUM_OF_BOMBS; i++) {
+            Tile tile = getRandomTile();
+            Entity bomb = new BombEntity(tile.pos.cpy(), new Vector2(96, 96), BOMB, EXPLODE);
+            entityManager.addEntity(bomb);
+        }
     }
 
     private void addCloud(Vector2 pos, String image, Vector2 mov, float scale) {

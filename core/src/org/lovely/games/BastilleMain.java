@@ -29,10 +29,10 @@ public class BastilleMain extends ApplicationAdapter {
     private InputManager inputManager;
     private AssetManager assetManager;
     private LoadingManager loadingManager;
-    private LevelManager levelManager;
+    LevelManager levelManager;
     private EffectManager effectManager;
     private PlayerManager playerManager;
-    private EntityManager entityManager;
+    EntityManager entityManager;
     private TextManager textManager;
     private SoundManager soundManager;
     private ScreenShaker screenShaker;
@@ -67,7 +67,7 @@ public class BastilleMain extends ApplicationAdapter {
         inputManager.update(this);
         cameraManager.update(player.pos, inputManager, screenShaker);
         levelManager.update(this);
-        playerManager.update(levelManager, this, effectManager, soundManager);
+        playerManager.update(levelManager, this, effectManager, soundManager, entityManager);
         effectManager.update();
         entityManager.update(this, soundManager);
 		Gdx.gl.glClearColor(background.r, background.g, background.b, background.a);
@@ -205,7 +205,7 @@ public class BastilleMain extends ApplicationAdapter {
 
     void startLevel() {
         playerManager.start();
-        levelManager.start();
+        levelManager.start(entityManager);
         effectManager.start();
         soundManager.playMusic(SOUND_MUSIC_CLOUDS);
         Vector2 startPos = levelManager.getStartPos();

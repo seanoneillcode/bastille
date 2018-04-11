@@ -17,7 +17,7 @@ public class SoundManager {
         this.loadingManager = loadingManager;
         this.sounds = new HashMap<>();
         this.soundEffectVolume = 1.0f;
-        this.musicVolume = 0.6f;
+        this.musicVolume = 0.0f;
     }
 
     public void playSound(String name) {

@@ -9,9 +9,11 @@ import java.util.List;
 public class EntityManager {
 
     List<Entity> entities;
+    List<Entity> newEntities;
 
     EntityManager() {
         entities = new ArrayList<>();
+        newEntities = new ArrayList<>();
     }
 
     public void update(BastilleMain bastilleMain, SoundManager soundManager) {
@@ -24,7 +26,16 @@ public class EntityManager {
                 entityIterator.remove();
             }
         }
+        entities.addAll(newEntities);
+        newEntities.clear();
     }
 
 
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
+    public void addEntity(Entity bomb) {
+        this.newEntities.add(bomb);
+    }
 }

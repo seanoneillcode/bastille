@@ -25,7 +25,7 @@ public class PlayerManager {
         return player;
     }
 
-    public void update(LevelManager levelManager, BastilleMain bastilleMain, EffectManager effectManager, SoundManager soundManager) {
+    public void update(LevelManager levelManager, BastilleMain bastilleMain, EffectManager effectManager, SoundManager soundManager, EntityManager entityManager) {
         boolean hasDeadEnts = false;
         for (Player player : players) {
             if (player.state == Player.PlayerState.ALIVE && player.needsGround && !isOnGround(levelManager, player.pos.cpy().add(player.offset), player.size)) {
@@ -54,6 +54,11 @@ public class PlayerManager {
                         effectManager.addEffect(player.pos.cpy().add(-4, -10), LAND_EFFECT, 0.3f, new Vector2());
                     }
 
+                }
+            }
+            for (Entity entity : entityManager.getEntities()) {
+                if (isOverlap(entity.pos, entity.size, player.pos, player.size)) {
+                    entity.handleCollision(player);
                 }
             }
             player.update(soundManager);
